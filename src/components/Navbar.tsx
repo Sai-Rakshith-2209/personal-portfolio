@@ -30,7 +30,8 @@ export const Navbar = () => {
               {isActive && (
                 <motion.div
                   layoutId="active-pill"
-                  className="absolute inset-0 bg-neutral-800 rounded-full -z-10 border border-white/10"
+                  // RESTORED: The Gradient and Glow Effect
+                  className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full -z-10 shadow-[0_0_20px_rgba(37,99,235,0.5)]"
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               )}
@@ -39,7 +40,7 @@ export const Navbar = () => {
           );
         })}
 
-        {/* Decorative subtle glow behind the navbar */}
+        {/* Decorative subtle glow behind the navbar container */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-xl rounded-full" />
       </nav>
     </div>

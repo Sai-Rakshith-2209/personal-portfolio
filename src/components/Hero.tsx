@@ -5,8 +5,69 @@ import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import Link from "next/link";
 import { Download, Mail, ArrowRight } from "lucide-react";
 
+// --- Looping Typewriter Component ---
+const LoopingTypewriter = ({
+  words,
+  className,
+}: {
+  words: string[];
+  className?: string;
+}) => {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [reverse, setReverse] = useState(false);
+  const [blink, setBlink] = useState(true);
+
+  // 1. Blinking cursor effect
+  useEffect(() => {
+    const timeout2 = setTimeout(() => {
+      setBlink((prev) => !prev);
+    }, 500);
+    return () => clearTimeout(timeout2);
+  }, [blink]);
+
+  // 2. Typing logic
+  useEffect(() => {
+    // Determine the current word to type
+    const currentWord = words[index % words.length];
+
+    // If typing is complete (full word is on screen) and not reversing yet
+    if (subIndex === currentWord.length + 1 && !reverse) {
+      setReverse(true);
+      return;
+    }
+
+    // If deleting is complete (screen is empty) and reversing
+    if (subIndex === 0 && reverse) {
+      setReverse(false);
+      setIndex((prev) => prev + 1); // Move to next word
+      return;
+    }
+
+    // Set the typing speed
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) => prev + (reverse ? -1 : 1));
+    }, Math.max(reverse ? 50 : subIndex === currentWord.length ? 2000 : 100, parseInt((Math.random() * 150).toString()))); // Randomize slightly for realism
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, index, reverse, words]);
+
+  return (
+    <h2 className={className}>
+      {/* The text content */}
+      {words[index % words.length].substring(0, subIndex)}
+
+      {/* The cursor */}
+      <span
+        className={`inline-block w-[3px] h-[1em] bg-blue-500 ml-1 align-middle ${
+          blink ? "opacity-100" : "opacity-0"
+        }`}
+      ></span>
+    </h2>
+  );
+};
+
 export const Hero = () => {
-  // Mouse tracking for the spotlight effect
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -26,11 +87,8 @@ export const Hero = () => {
       onMouseMove={handleMouseMove}
     >
       {/* --- BACKGROUND EFFECTS --- */}
-
-      {/* 1. Base Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
-      {/* 2. Spotlight Follower */}
       <motion.div
         className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
         style={{
@@ -44,7 +102,6 @@ export const Hero = () => {
         }}
       />
 
-      {/* 3. Static Ambient Glow (Purple/Blue) */}
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-800/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-800/20 rounded-full blur-[120px] pointer-events-none" />
 
@@ -63,53 +120,55 @@ export const Hero = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
             <span className="text-xs font-semibold text-blue-300 tracking-wide uppercase">
-              Available for Hire
+              open to opportunities
             </span>
           </div>
         </motion.div>
 
-        {/* Main Title */}
-        <div className="space-y-4">
+        {/* Main Title Area */}
+        <div className="space-y-6">
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white"
           >
             Sai Rakshith
           </motion.h1>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-2xl md:text-4xl font-medium text-gray-400"
-          >
-            Architecting the{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-bold">
-              Cloud
-            </span>{" "}
-            of Tomorrow.
-          </motion.h2>
+          {/* Job Title: Looping Typewriter */}
+          <div className="h-12 md:h-16 flex items-center justify-center">
+            <LoopingTypewriter
+              // YOU CAN EDIT THE TITLES HERE
+              words={["Senior Cloud Engineer", "AWS Solutions Architect"]}
+              className="text-2xl md:text-4xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400"
+            />
+          </div>
         </div>
 
-        {/* Description */}
+        {/* Formal Description */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed"
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed font-light"
         >
-          Senior Cloud Engineer specialized in building fault-tolerant AWS
-          ecosystems. Expert in Infrastructure as Code, Serverless
-          Architectures, and integrating AI into DevOps workflows.
+          Specializing in the design and deployment of secure, high-availability
+          AWS ecosystems. Expertise spans{" "}
+          <strong className="text-gray-200 font-medium">
+            Infrastructure as Code (CDK)
+          </strong>
+          ,{" "}
+          <strong className="text-gray-200 font-medium">
+            Serverless Architecture.
+          </strong>
         </motion.p>
 
         {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
           className="flex flex-col sm:flex-row gap-4 justify-center pt-8"
         >
           <Link
