@@ -7,7 +7,7 @@ export const Footer = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText("sairakshith@sairakshith.com");
+    navigator.clipboard.writeText("sairakshith10@gmail.com");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -77,7 +77,7 @@ export const Footer = () => {
                       onClick={handleCopyEmail}
                       className="text-gray-300 hover:text-cyan-300 transition-colors text-left flex items-center gap-2 group-hover/item:translate-x-1 duration-300"
                     >
-                      "sairakshith@sairakshith.com"
+                      "sairakshith10@gmail.com"
                       {copied ? (
                         <Check size={14} className="text-emerald-500" />
                       ) : (
